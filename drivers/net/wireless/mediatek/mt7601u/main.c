@@ -17,10 +17,6 @@
 #include <linux/etherdevice.h>
 #include <linux/version.h>
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3, 19, 0)
-#error Your kernel is too old, please upgrade to at least 3.19
-#endif
-
 static int mt7601u_start(struct ieee80211_hw *hw)
 {
 	struct mt7601u_dev *dev = hw->priv;
@@ -272,9 +268,7 @@ mt7601u_sta_notify(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 }
 
 static void
-mt7601u_sw_scan(struct ieee80211_hw *hw,
-		struct ieee80211_vif *vif,
-		const u8 *mac_addr)
+mt7601u_sw_scan(struct ieee80211_hw *hw)
 {
 	struct mt7601u_dev *dev = hw->priv;
 
@@ -283,8 +277,7 @@ mt7601u_sw_scan(struct ieee80211_hw *hw,
 }
 
 static void
-mt7601u_sw_scan_complete(struct ieee80211_hw *hw,
-			 struct ieee80211_vif *vif)
+mt7601u_sw_scan_complete(struct ieee80211_hw *hw)
 {
 	struct mt7601u_dev *dev = hw->priv;
 
