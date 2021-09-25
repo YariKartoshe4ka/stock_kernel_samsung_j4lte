@@ -2250,6 +2250,36 @@ static inline void skb_propagate_pfmemalloc(struct page *page,
 }
 
 /**
+ * __dev_alloc_pages - allocate page for network Rx
+ * @gfp_mask: allocation priority. Set __GFP_NOMEMALLOC if not for network Rx
+ * @order: size of the allocation
+ *
+ * Allocate a new page.
+ *
+ * %NULL is returned if there is no free memory.
+*/
+static inline struct page *__dev_alloc_pages(gfp_t gfp_mask,
+                         unsigned int order)
+{
+    /* This piece of code contains several assumptions.
+     * 1.  This is for device Rx, therefor a cold page is preferred.
+     * 2.  The expectation is the user wants a compound page.
+     * 3.  If requesting a order 0 page it will not be compound
+     *     due to the check to see if order has a value in prep_new_page
+     * 4.  __GFP_MEMALLOC is ignored if __GFP_NOMEMALLOC is set due to
+     *     code in gfp_to_alloc_flags that should be enforcing this.
+     */
+    gfp_mask |= __GFP_COLD | __GFP_COMP | __GFP_MEMALLOC;
+
+    return alloc_pages_node(NUMA_NO_NODE, gfp_mask, order);
+}
+
+static inline struct page *dev_alloc_pages(unsigned int order)
+{
+    return __dev_alloc_pages(GFP_ATOMIC, order);
+}
+
+/**
  * skb_frag_page - retrieve the page referred to by a paged fragment
  * @frag: the paged fragment
  *
