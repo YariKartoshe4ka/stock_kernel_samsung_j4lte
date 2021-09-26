@@ -23,17 +23,17 @@ jobs:
       - name: Run build script
         run: ./build_kernel.sh
 
-      - name: Repack boot image
-        run: |
-          git clone https://github.com/YariKartoshe4ka/AIK-Linux-j4lte AIK-Linux
-          mv arch/arm64/boot/Image AIK-Linux/split_img/boot.img-kernel
-          cd AIK-Linux
-          ./repackimg.sh
-          mv image-new.img boot.img
+      # - name: Repack boot image
+      #   run: |
+      #     git clone https://github.com/YariKartoshe4ka/AIK-Linux-j4lte AIK-Linux
+      #     mv arch/arm64/boot/Image AIK-Linux/split_img/boot.img-kernel
+      #     cd AIK-Linux
+      #     ./repackimg.sh
+      #     mv image-new.img boot.img
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: Boot Image
-          path: AIK-Linux/boot.img
+          path: arch/arm64/boot/Image
 
