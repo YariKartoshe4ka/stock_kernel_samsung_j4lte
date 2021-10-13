@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+      - "*"
+
+  pull_request:
+    branches:
+      - "*"
+
+name: Build
+
+jobs:
+  create-boot-image:
+    name: Create boot image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+
+      - name: Clone cross-compiler
+        run: git clone https://github.com/YariKartoshe4ka/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9.git aarch64-linux-android-4.9
+      
+      - name: Run build script
+        run: ./build_kernel.sh
+
+      - name: Repack boot image
+        run: |
+          git clone https://github.com/YariKartoshe4ka/AIK-Linux-j4lte AIK-Linux
+          cd AIK-Linux
+          ./unpackimg.sh boot.img
+          cp ../arch/arm64/boot/Image split_img/boot.img-kernel
+          cp ../arch/arm64/boot/dtb.img split_img/boot.img-dt
+          ./repackimg.sh
+          mv image-new.img boot.img
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Boot Image
+          path: AIK-Linux/boot.img
+
