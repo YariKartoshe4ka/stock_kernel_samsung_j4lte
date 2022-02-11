@@ -33,9 +33,12 @@ jobs:
       #     ./repackimg.sh
       #     mv image-new.img boot.img
 
+      - name: Build DTB image
+        run: scripts/dtbTool -s 2048 -o arch/arm64/boot/dt.img -p scripts/dtc/ arch/arm64/boot/
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: Image
-          path: arch/arm64/boot/Image.gz-dtb
+          name: dt.img
+          path: arch/arm64/boot/dt.img
 
